@@ -1,3 +1,4 @@
+// Demonstrate encapsulation in js
 //complete the ExpenseTracker class.
 // Do not alter the starter code
 function main() {

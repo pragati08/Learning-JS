@@ -1,3 +1,5 @@
+// Static keyword properties and methods
+
 function main() {
   class Message {
     // Define static properties here

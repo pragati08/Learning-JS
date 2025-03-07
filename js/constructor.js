@@ -1,4 +1,4 @@
-// Create object using Constructor Fucntion
+// Create object using Constructor Fucntion.
 
 //Refactor the gadget constructor function
 function Gadget(brand, type) {

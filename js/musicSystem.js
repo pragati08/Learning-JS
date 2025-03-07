@@ -1,3 +1,5 @@
+// Inheritance in JS
+
 //Create the required Classes with each inheriting Class as specified in the Problem Statement.
 function main() {
   // Crete your class media with proper constructor properties and methods as mentioned.

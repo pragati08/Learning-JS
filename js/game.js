@@ -1,3 +1,5 @@
+// Inheritance in constructor function
+
 function main() {
   //Create Character constructor function
   function Character(health, strength, agility) {

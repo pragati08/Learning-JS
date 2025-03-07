@@ -1,3 +1,5 @@
+// Implementation of getter and setter in js
+
 function main() {
   //create your class here with the name Account with all the private properties and getter and setter
   class Account {
