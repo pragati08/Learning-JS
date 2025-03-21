@@ -44,64 +44,70 @@ let number = 0;
 let continueBtn = document.querySelector("#proceedBtn");
 let cancelBtn = document.querySelector("#cancelBtn");
 let selectedSeatHolder = document.querySelector(".selectedSeatsHolder");
-let seatNumber = [];
+
+let selectedSeats = [];
 
 seatArr.forEach((seat, index) => {
   seat.addEventListener("click", () => {
     if (seat.classList.contains("occupied")) {
-    } else {
-      console.log(index);
-      seat.classList.toggle("selected");
-      number++;
-      numberOfSeats.textContent = number;
-      totalPrice = priceEachTicket * number;
-      ticketPrice.textContent = `$ ${totalPrice}`;
-      showSeatNumber(seat, index + 1);
+      return;
     }
+
+    seat.classList.toggle("selected");
+
+    if (seat.classList.contains("selected")) {
+      selectedSeats.push(index + 1);
+    } else {
+      selectedSeats = selectedSeats.filter(
+        (seatNumber) => seatNumber !== index + 1
+      );
+    }
+
+    updateSelectedSeatsDisplay();
+    updateSeatCountAndPrice();
   });
 });
 
-function showSeatNumber(seat, i) {
-  if (seat.classList.contains("selected")) {
-    console.log("in if");
-    seatNumber = document.createElement("span");
-    selectedSeatHolder.appendChild(seatNumber);
-    seatNumber.innerHTML = i;
-    seatNumber.classList.add("selectedSeat");
-  } else {
-    console.log("in elses");
-    seatNumber.remove();
-  }
+function updateSelectedSeatsDisplay() {
+  selectedSeatHolder.innerHTML =
+    selectedSeats.length > 0
+      ? ""
+      : "<span class='noSelected'>No Seat Selected</span>";
+  selectedSeats.forEach((seatNumber) => {
+    const seatElement = document.createElement("span");
+    seatElement.classList.add("selectedSeat");
+    seatElement.textContent = seatNumber;
+    selectedSeatHolder.appendChild(seatElement);
+  });
 }
 
-continueBtn.addEventListener("click", () => {
-  seatArr.forEach((seat) => {
-    if (seat.classList.contains("selected")) {
-      seat.classList.add("occupied");
-      seat.classList.remove("selected");
-    }
-  });
-  alert("Yayy! Your seat has been booked!");
-  totalPrice = 0;
-  number = 0;
-  ticketPrice.textContent = `$ ${totalPrice}`;
-  numberOfSeats.textContent = number;
-});
+function updateSeatCountAndPrice() {
+  numberOfSeats.textContent = selectedSeats.length;
+  ticketPrice.textContent = `$ ${selectedSeats.length * priceEachTicket}`;
+}
 
-cancelBtn.addEventListener("click", () => {
-  seatArr.forEach((seat) => {
-    if (seat.classList.contains("selected")) {
-      seat.classList.remove("selected");
-    }
-  });
-
-  totalPrice = 0;
-  number = 0;
-  ticketPrice.textContent = `$ ${totalPrice}`;
-  numberOfSeats.textContent = number;
-});
-
-//Add eventLister to each unoccupied seat
 //Add eventLsiter to continue Button
+continueBtn.addEventListener("click", () => {
+  selectedSeats.forEach((seatNumber) => {
+    const seat = seatArr[seatNumber - 1];
+    seat.classList.add("occupied");
+    seat.classList.remove("selected");
+  });
+
+  alert("Yayy! Your seat has been booked!");
+  selectedSeats = [];
+  updateSelectedSeatsDisplay();
+  updateSeatCountAndPrice();
+});
+
 //Add eventListerner to Cancel Button
-/* <span class="selectedSeat">55</span> */
+cancelBtn.addEventListener("click", () => {
+  selectedSeats.forEach((seatNumber) => {
+    const seat = seatArr[seatNumber - 1];
+    seat.classList.remove("selected");
+  });
+
+  selectedSeats = [];
+  updateSelectedSeatsDisplay();
+  updateSeatCountAndPrice();
+});
