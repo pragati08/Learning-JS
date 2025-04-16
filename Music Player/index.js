@@ -96,103 +96,27 @@ function renderSong(song) {
 
 renderSong(songsObj[0]);
 
-/** Toggle Theme */
+// Left section - When the user clicks on any song from the list the song should be played.
+function playSongOnClick() {
+  const songList = document.querySelectorAll(".songs-list li");
 
-function toggleTheme() {
-  const bodyBg = document.querySelector(".wrappper");
-  bodyBg.classList.toggle("change-theme");
-
-  if (bodyBg.classList.contains("change-theme")) {
-    themeBtn.innerHTML = "Enable LIGHT theme";
-  } else {
-    themeBtn.innerHTML = "Enable DARK theme";
-  }
-}
-
-const themeBtn = document.querySelector(".theme-btn");
-themeBtn.addEventListener("click", toggleTheme);
-
-/** Next and previous button */
-
-const nextBtn = document.querySelector(".next");
-const previousBtn = document.querySelector(".previous");
-
-nextBtn.addEventListener("click", () => {
-  if (currentSongId == songsObj.length) {
-    currentSongId = 0;
-    songEl.replaceChildren();
-    renderSong(songsObj[currentSongId]);
-    return;
-  }
-
-  songEl.replaceChildren();
-  renderSong(songsObj[currentSongId]);
-});
-
-previousBtn.addEventListener("click", () => {
-  if (currentSongId == 1) {
-    songEl.replaceChildren();
-    renderSong(songsObj[songsObj.length - 1]);
-  } else {
-    songEl.replaceChildren();
-    renderSong(songsObj[currentSongId - 2]);
-  }
-});
-
-/** Add to playlist */
-let tempPlayList;
-
-function addSongToPlaylist() {
-  tempPlayList = document.querySelector(".playlist-songs");
-  let flag = true;
-
-  tempPlaylistArr.map((item) => {
-    if (item === songsObj[currentSongId - 1].name) {
-      flag = false;
-    }
+  songList.forEach((song) => {
+    song.addEventListener("click", () => {
+      songsObj.forEach((item, i) => {
+        if (item.name === song.innerHTML) {
+          songEl.replaceChildren();
+          renderSong(songsObj[i]);
+          const audio = songEl.querySelector(".show-audio");
+          audio.play();
+        }
+      });
+    });
   });
-  if (tempPlaylistArr.length == 0 || flag) {
-    const songEl = document.createElement("li");
-    songEl.innerHTML = songsObj[currentSongId - 1].name;
-    songEl.classList.add("newsong");
-    tempPlayList.appendChild(songEl);
-    tempPlaylistArr.push(songsObj[currentSongId - 1].name);
-  }
 }
 
-const addToPlaylistBtn = document.querySelector(".add-to-playlist");
-addToPlaylistBtn.addEventListener("click", addSongToPlaylist);
-let tempPlaylistArr = [];
-
-/** Create Playlist */
-
-const createPlaylistBtn = document.querySelector(".create-playlist");
-const playlistNameEl = document.querySelector(".playlist-name");
-const myPlaylist = document.querySelector(".my-playlist");
-
-let playlistNameVal;
-
-playlistNameEl.addEventListener("input", (event) => {
-  playlistNameVal = event.target.value;
-});
-
-function createPlaylist(newPlayListName) {
-  const newPlaylist = document.createElement("li");
-  newPlaylist.innerHTML = newPlayListName;
-  myPlaylist.appendChild(newPlaylist);
-  newPlayListName = [];
-  newPlayListName = tempPlaylistArr;
-  tempPlaylistArr = [];
-  let newtempList = document.querySelectorAll(".newsong");
-  console.log(newtempList);
-  window.remove(newtempList);
-  playlistNameEl.value = "";
-}
-
-createPlaylistBtn.addEventListener("click", () => {
-  if (playlistNameVal) {
-    createPlaylist(playlistNameVal);
-  }
+// The songs list will be created once the page is completely loaded, else the list will be empty
+document.addEventListener("DOMContentLoaded", () => {
+  playSongOnClick();
 });
 
 /* First Section - all songs listed below the All songs header */
@@ -228,20 +152,168 @@ selectBox.addEventListener("change", (event) => {
       const rockSongList = document.createElement("li");
       rockSongList.innerHTML = song.name;
       leftSongsList.appendChild(rockSongList);
+      playSongOnClick();
     });
   } else if (event.target.value === "pop") {
     popSongs.map((song) => {
       const popSongList = document.createElement("li");
       popSongList.innerHTML = song.name;
       leftSongsList.appendChild(popSongList);
+      playSongOnClick();
     });
   } else if (event.target.value === "hip-hop") {
     hipHopSongs.map((song) => {
       const hipHopSongList = document.createElement("li");
       hipHopSongList.innerHTML = song.name;
       leftSongsList.appendChild(hipHopSongList);
+      playSongOnClick();
     });
   } else {
     showAllSongs();
+  }
+});
+
+/** Toggle Theme */
+
+function toggleTheme() {
+  const bodyBg = document.querySelector(".wrappper");
+  bodyBg.classList.toggle("change-theme");
+
+  if (bodyBg.classList.contains("change-theme")) {
+    themeBtn.innerHTML = "Enable LIGHT theme";
+  } else {
+    themeBtn.innerHTML = "Enable DARK theme";
+  }
+}
+
+const themeBtn = document.querySelector(".theme-btn");
+themeBtn.addEventListener("click", toggleTheme);
+
+/** Next and previous button */
+
+const nextBtn = document.querySelector(".next");
+const previousBtn = document.querySelector(".previous");
+
+nextBtn.addEventListener("click", () => {
+  if (currentSongId == songsObj.length) {
+    currentSongId = 0;
+    songEl.replaceChildren();
+    renderSong(songsObj[currentSongId]);
+    const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+    audio.play();
+    return;
+  }
+
+  songEl.replaceChildren();
+  renderSong(songsObj[currentSongId]);
+  const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+  audio.play();
+});
+
+previousBtn.addEventListener("click", () => {
+  if (currentSongId == 1) {
+    songEl.replaceChildren();
+    renderSong(songsObj[songsObj.length - 1]);
+    const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+    audio.play();
+  } else {
+    songEl.replaceChildren();
+    renderSong(songsObj[currentSongId - 2]);
+    const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+    audio.play();
+  }
+});
+
+/** Add to playlist */
+let tempPlayList;
+let flag;
+let allPlaylists = {};
+
+function addSongToPlaylist() {
+  tempPlayList = document.querySelector(".playlist-songs");
+  flag = true;
+
+  tempPlaylistArr.map((item) => {
+    if (item === songsObj[currentSongId - 1].name) {
+      flag = false;
+    }
+  });
+  if (flag) {
+    const songEl = document.createElement("li");
+    songEl.innerHTML = songsObj[currentSongId - 1].name;
+    songEl.classList.add("selected");
+    tempPlayList.appendChild(songEl);
+    tempPlaylistArr.push(songsObj[currentSongId - 1].name);
+  }
+}
+
+const addToPlaylistBtn = document.querySelector(".add-to-playlist");
+addToPlaylistBtn.addEventListener("click", addSongToPlaylist);
+let tempPlaylistArr = [];
+let playListArr = [];
+
+/** Create Playlist */
+
+const createPlaylistBtn = document.querySelector(".create-playlist");
+const playlistNameEl = document.querySelector(".playlist-name");
+const myPlaylist = document.querySelector(".my-playlist");
+
+let playlistNameVal;
+
+playlistNameEl.addEventListener("input", (event) => {
+  playlistNameVal = event.target.value;
+});
+
+let resultObj;
+let playlistArray = [];
+
+function createPlaylist(newPlayListName) {
+  if (newPlayListName !== "") {
+    const newPlaylist = document.createElement("li");
+    newPlaylist.innerHTML = newPlayListName;
+    newPlaylist.classList.add("pl-song");
+    myPlaylist.appendChild(newPlaylist);
+    playListArr.push(newPlayListName);
+    playlistArray.push({
+      name: newPlayListName,
+      songArr: tempPlaylistArr,
+    });
+  }
+}
+
+createPlaylistBtn.addEventListener("click", () => {
+  createPlaylist(playlistNameVal);
+  tempPlaylistArr = [];
+  playlistNameEl.value = "";
+  tempPlayList.querySelectorAll("li").forEach((item) => {
+    item.remove();
+  });
+});
+
+let result;
+const playlistSec = myPlaylist.getElementsByTagName("li");
+
+function toShowSongsOnClickOfPlaylistName(arr) {
+  tempPlayList.querySelectorAll("li").forEach((item) => {
+    item.remove();
+  });
+  arr.map((song) => {
+    const allSongList = document.createElement("li");
+    allSongList.innerHTML = song;
+    tempPlayList.appendChild(allSongList);
+    playSongOnClick();
+  });
+}
+document.addEventListener("click", (e) => {
+  const ele = document.querySelectorAll(".pl-song");
+  if (ele.length > 0) {
+    ele.forEach((item) => {
+      item.addEventListener("click", () => {
+        const longSongs = playlistArray.filter(
+          (song) => song.name === item.innerHTML
+        );
+        toShowSongsOnClickOfPlaylistName(longSongs[0].songArr);
+      });
+    });
   }
 });
