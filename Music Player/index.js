@@ -1,3 +1,4 @@
+/** All the Songs Object */
 const songsObj = [
   {
     id: 1,
@@ -66,9 +67,32 @@ const songsObj = [
 const displaySong = document.querySelector(".display");
 const songControlBtns = document.querySelector(".song-control-btns");
 const songEl = document.querySelector(".song-assets");
-currentSongId = 1;
+const leftSongsList = document.querySelector(".songs-list");
+const rockSongs = songsObj.filter((song) => song.genre === "rock");
+const popSongs = songsObj.filter((song) => song.genre === "pop");
+const hipHopSongs = songsObj.filter((song) => song.genre === "hip-hop");
+const themeBtn = document.querySelector(".theme-btn");
+const nextBtn = document.querySelector(".next");
+const previousBtn = document.querySelector(".previous");
+const addToPlaylistBtn = document.querySelector(".add-to-playlist");
+const createPlaylistBtn = document.querySelector(".create-playlist");
+const playlistNameEl = document.querySelector(".playlist-name");
+const myPlaylist = document.querySelector(".my-playlist");
+const playlistSec = myPlaylist.getElementsByTagName("li");
 
-function renderSong(song) {
+let result;
+let playlistNameVal;
+let currentSongId = 1;
+let tempPlayList;
+let flag;
+let allPlaylists = {};
+let tempPlaylistArr = [];
+let playListArr = [];
+let resultObj;
+let playlistArray = [];
+
+/** Display the songInfo(img, title, artist, track) of the current song in the middle section of the page */
+function renderCurrentSong(song) {
   currentSongId = song.id;
 
   songImg = document.createElement("img");
@@ -94,9 +118,9 @@ function renderSong(song) {
   songEl.appendChild(songTrack);
 }
 
-renderSong(songsObj[0]);
+renderCurrentSong(songsObj[0]);
 
-// Left section - When the user clicks on any song from the list the song should be played.
+/** Left section - When the user clicks on any song from the list the song should be played. */
 function playSongOnClick() {
   const songList = document.querySelectorAll(".songs-list li");
 
@@ -105,7 +129,7 @@ function playSongOnClick() {
       songsObj.forEach((item, i) => {
         if (item.name === song.innerHTML) {
           songEl.replaceChildren();
-          renderSong(songsObj[i]);
+          renderCurrentSong(songsObj[i]);
           const audio = songEl.querySelector(".show-audio");
           audio.play();
         }
@@ -114,32 +138,22 @@ function playSongOnClick() {
   });
 }
 
-// The songs list will be created once the page is completely loaded, else the list will be empty
+/** The songs list will be created once the page is completely loaded, else the list will be empty */
 document.addEventListener("DOMContentLoaded", () => {
+  showSongs(songsObj);
   playSongOnClick();
 });
 
 /* First Section - all songs listed below the All songs header */
-const leftSongsList = document.querySelector(".songs-list");
-
-function showAllSongs() {
-  songsObj.map((song) => {
+function showSongs(songArray) {
+  songArray.map((song) => {
     const allSongList = document.createElement("li");
     allSongList.innerHTML = song.name;
     leftSongsList.appendChild(allSongList);
   });
 }
 
-showAllSongs();
-
 /* First Section - Filter songs based on genre */
-
-const rockSongs = songsObj.filter((song) => song.genre === "rock");
-
-const popSongs = songsObj.filter((song) => song.genre === "pop");
-
-const hipHopSongs = songsObj.filter((song) => song.genre === "hip-hop");
-
 var selectBox = document.querySelector(".form-select");
 selectBox.addEventListener("change", (event) => {
   let temp = leftSongsList.querySelectorAll("li");
@@ -148,33 +162,21 @@ selectBox.addEventListener("change", (event) => {
   });
 
   if (event.target.value === "rock") {
-    rockSongs.map((song) => {
-      const rockSongList = document.createElement("li");
-      rockSongList.innerHTML = song.name;
-      leftSongsList.appendChild(rockSongList);
-      playSongOnClick();
-    });
+    showSongs(rockSongs);
+    playSongOnClick();
   } else if (event.target.value === "pop") {
-    popSongs.map((song) => {
-      const popSongList = document.createElement("li");
-      popSongList.innerHTML = song.name;
-      leftSongsList.appendChild(popSongList);
-      playSongOnClick();
-    });
+    showSongs(popSongs);
+    playSongOnClick();
   } else if (event.target.value === "hip-hop") {
-    hipHopSongs.map((song) => {
-      const hipHopSongList = document.createElement("li");
-      hipHopSongList.innerHTML = song.name;
-      leftSongsList.appendChild(hipHopSongList);
-      playSongOnClick();
-    });
+    showSongs(hipHopSongs);
+    playSongOnClick();
   } else {
-    showAllSongs();
+    showSongs(songsObj);
+    playSongOnClick();
   }
 });
 
 /** Toggle Theme */
-
 function toggleTheme() {
   const bodyBg = document.querySelector(".wrappper");
   bodyBg.classList.toggle("change-theme");
@@ -186,50 +188,40 @@ function toggleTheme() {
   }
 }
 
-const themeBtn = document.querySelector(".theme-btn");
 themeBtn.addEventListener("click", toggleTheme);
 
 /** Next and previous button */
-
-const nextBtn = document.querySelector(".next");
-const previousBtn = document.querySelector(".previous");
-
 nextBtn.addEventListener("click", () => {
   if (currentSongId == songsObj.length) {
     currentSongId = 0;
     songEl.replaceChildren();
-    renderSong(songsObj[currentSongId]);
-    const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+    renderCurrentSong(songsObj[currentSongId]);
+    const audio = songEl.querySelector(".show-audio");
     audio.play();
     return;
   }
-
   songEl.replaceChildren();
-  renderSong(songsObj[currentSongId]);
-  const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+  renderCurrentSong(songsObj[currentSongId]);
+  const audio = songEl.querySelector(".show-audio");
   audio.play();
 });
 
 previousBtn.addEventListener("click", () => {
   if (currentSongId == 1) {
     songEl.replaceChildren();
-    renderSong(songsObj[songsObj.length - 1]);
-    const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+    renderCurrentSong(songsObj[songsObj.length - 1]);
+    const audio = songEl.querySelector(".show-audio");
     audio.play();
   } else {
     songEl.replaceChildren();
-    renderSong(songsObj[currentSongId - 2]);
-    const audio = songEl.querySelector(".show-audio"); // or use `.querySelector('.show-audio')`
+    renderCurrentSong(songsObj[currentSongId - 2]);
+    const audio = songEl.querySelector(".show-audio");
     audio.play();
   }
 });
 
 /** Add to playlist */
-let tempPlayList;
-let flag;
-let allPlaylists = {};
-
-function addSongToPlaylist() {
+function addtoPlaylist() {
   tempPlayList = document.querySelector(".playlist-songs");
   flag = true;
 
@@ -247,26 +239,14 @@ function addSongToPlaylist() {
   }
 }
 
-const addToPlaylistBtn = document.querySelector(".add-to-playlist");
-addToPlaylistBtn.addEventListener("click", addSongToPlaylist);
-let tempPlaylistArr = [];
-let playListArr = [];
+addToPlaylistBtn.addEventListener("click", addtoPlaylist);
 
 /** Create Playlist */
-
-const createPlaylistBtn = document.querySelector(".create-playlist");
-const playlistNameEl = document.querySelector(".playlist-name");
-const myPlaylist = document.querySelector(".my-playlist");
-
-let playlistNameVal;
-
 playlistNameEl.addEventListener("input", (event) => {
   playlistNameVal = event.target.value;
 });
 
-let resultObj;
-let playlistArray = [];
-
+/** Takes the name of the playlist as input and adds it to the All Playlist section */
 function createPlaylist(newPlayListName) {
   if (newPlayListName !== "") {
     const newPlaylist = document.createElement("li");
@@ -281,6 +261,7 @@ function createPlaylist(newPlayListName) {
   }
 }
 
+/** Click handler for Create Playlist btn */
 createPlaylistBtn.addEventListener("click", () => {
   createPlaylist(playlistNameVal);
   tempPlaylistArr = [];
@@ -290,10 +271,8 @@ createPlaylistBtn.addEventListener("click", () => {
   });
 });
 
-let result;
-const playlistSec = myPlaylist.getElementsByTagName("li");
-
-function toShowSongsOnClickOfPlaylistName(arr) {
+/** On click of playlist name form the All Playlist list, show the songs in the Current Playlist section */
+function renderPlaylistSong(arr) {
   tempPlayList.querySelectorAll("li").forEach((item) => {
     item.remove();
   });
@@ -304,7 +283,9 @@ function toShowSongsOnClickOfPlaylistName(arr) {
     playSongOnClick();
   });
 }
-document.addEventListener("click", (e) => {
+
+/** Click handler for each playlist item */
+document.addEventListener("click", () => {
   const ele = document.querySelectorAll(".pl-song");
   if (ele.length > 0) {
     ele.forEach((item) => {
@@ -312,7 +293,7 @@ document.addEventListener("click", (e) => {
         const longSongs = playlistArray.filter(
           (song) => song.name === item.innerHTML
         );
-        toShowSongsOnClickOfPlaylistName(longSongs[0].songArr);
+        renderPlaylistSong(longSongs[0].songArr);
       });
     });
   }
