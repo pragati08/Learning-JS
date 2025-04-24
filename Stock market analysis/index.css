@@ -1,0 +1,75 @@
+body{
+  margin: 0;
+  background-color: black;
+  height: 100vh;
+  color: white;
+}
+
+.heading {
+  color: white;
+  text-align: center;
+  font-size: 3rem;
+}
+
+canvas {
+  display: block;
+  box-sizing: border-box;
+  /* height: 500px; */
+  width: 70vw;
+  background-color: rgb(28, 28, 100);
+}
+
+.stock-section {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 2rem;
+}
+
+.stock-table {
+  td{
+    padding: 0.25rem 1rem;
+  }
+
+  .stock-btn {
+    background-color: rgb(28, 28, 100);
+    cursor: pointer;
+  }
+}
+
+.current-stock-info {
+  margin: 10px 0;
+
+  span {
+    margin: 0 5px;
+    font-weight: bold;
+  }
+}
+
+.text-green {
+  color: rgb(12, 165, 12);
+}
+
+.summary-section {
+  margin: 1rem 2rem;
+}
+
+.current-stock-info {
+  margin: 1rem 0;
+}
+
+.time-btns {
+  position: relative;
+    top: -3rem;
+    text-align: center;
+
+    button {
+      padding: 2px 5px;
+      background-color: rgb(9, 9, 188);
+      color: white;
+      outline: none;
+      border: 0;
+      border-radius: 10px;
+      font-size: large;
+      margin: 0 2rem
+    }
+}
