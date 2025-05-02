@@ -1,0 +1,25 @@
+// List of names
+const names = ["Alice", "John", "Michael", "Emma", "Sophia", "James"];
+
+// Function 1: Find names
+function findNames(names, peopleName) {
+  names.find((name) => {
+    if (name === peopleName) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+}
+
+// Function 2: Find index of a name
+function updateNamesIndex(names, peopleName) {
+  return names.findIndex((name) => name === peopleName);
+}
+
+// Example Usage:
+console.log(findNames(names, "John")); // Output: "John"
+console.log(findNames(names, "Andrew")); // Output: "Name not found"
+
+console.log(updateNamesIndex(names, "Emma")); // Output: 3
+console.log(updateNamesIndex(names, "Mark")); // Output: -1
